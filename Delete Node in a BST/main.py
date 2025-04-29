@@ -19,20 +19,22 @@ def deleteNode(root:TreeNode, key: int) -> TreeNode:
         if cur is None:
             break
         if cur.val == key:
-            if cur.right:
-                cur.right.left = cur.left
-                cur = cur.right
-            elif cur.left:
-                cur.left.right = cur.right
-                cur = cur.left
-            else:
-                cur = None
-            if prev.right == root:
-                return cur
-            if prev.left and  prev.left.val == key:
-                prev.left = cur
+            predecessor = find_predecessor(cur) #test 1 -> 2
+            predecessor.right = cur.right
+            if prev.left and prev.left.val == key:
+                if predecessor == cur:
+                    prev.left = cur.right
+                else:
+                    prev.left = cur.left
             elif prev.right and prev.right.val == key:
-                prev.right = cur
+                if predecessor == cur:
+                    prev.right = cur.right
+                else:
+                    prev.right = cur.left
+            if cur == root:
+                if predecessor == cur:
+                    return cur.right
+                return cur.left
             return root
         if cur.val > key:
             prev, cur = cur, cur.left
@@ -41,13 +43,22 @@ def deleteNode(root:TreeNode, key: int) -> TreeNode:
     return root
 
 
-f = TreeNode(7, None, None)
-e = TreeNode(4, None, None)
-d = TreeNode(2, None, None)
-c = TreeNode(6, None, f)
-b = TreeNode(3, d, e)
-a = TreeNode(5, b, c)
+def find_predecessor(node: TreeNode):
+    if not node.left:
+        return node
+    node = node.left
+    while node.right:
+        node = node.right
+    return node
+
+# f = TreeNode(9, None, None)
+# e = TreeNode(5, None, None)
+# d = TreeNode(8, None, f)
+# c = TreeNode(6, e, None)
+b = TreeNode(2, None, None)
+a = TreeNode(1, None, b)
 
 
-x = deleteNode(a, 3)
+x = deleteNode(a, 1)
 x
+# print(find_predecessor(a))
